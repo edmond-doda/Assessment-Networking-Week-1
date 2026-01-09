@@ -1,14 +1,15 @@
 """A CLI application for interacting with the Postcode API."""
 
 from argparse import ArgumentParser
-from postcode_functions import validate_postcode, get_postcode_completions, load_cache, save_cache
+from postcode_functions import validate_postcode, get_postcode_completions
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
 
     parser.add_argument(
-        '--mode', '-m', required=True, help="Select which mode you would like: 'validate' or 'complete'")
+        '--mode', '-m', required=True, help="Select which mode you would "
+        "like: 'validate' or 'complete'")
 
     parser.add_argument('postcode', type=str,
                         help="Enter a valid UK postcode as a string")

@@ -15,7 +15,7 @@ def load_cache() -> dict:
         with open(CACHE_FILE, 'r') as f:
             cache = json.load(f)
             return cache
-    except Exception:
+    except FileNotFoundError:
         return {}
 
 
@@ -34,7 +34,7 @@ def validate_postcode(postcode: str) -> bool:
     if formatted_postcode in cache and "valid" in cache[formatted_postcode]:
         return cache[formatted_postcode]["valid"]
 
-    response = req.get(f'{URL}/{formatted_postcode}/validate')
+    response = req.get(f'{URL}/{formatted_postcode}/validate', timeout=5)
     status_code_exceptions(response.status_code)
     data = response.json()
 
@@ -51,7 +51,7 @@ def get_postcode_for_location(lat: float, long: float) -> str:
     """Returns the postcode given the longitude and latitude values"""
     validates_float(lat)
     validates_float(long)
-    response = req.get(f'{URL}?lon={long}&lat={lat}')
+    response = req.get(f'{URL}?lon={long}&lat={lat}', timeout=5)
     status_code_exceptions(response.status_code)
 
     data = response.json()
@@ -73,7 +73,7 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
         return cache[formatted_postcode_start]['completions']
 
     response = req.get(
-        f'{URL}/{formatted_postcode_start}/autocomplete?limit=5')
+        f'{URL}/{formatted_postcode_start}/autocomplete?limit=5', timeout=5)
     status_code_exceptions(response.status_code)
     postcodes = response.json()['result']
 
@@ -91,30 +91,34 @@ def get_postcodes_details(postcodes: list[str]) -> list:
     """Returns detailed information for multiple postcodes using a bulk lookup."""
     validates_list_of_strings(postcodes)
 
-    response = req.post(f'{URL}', json={"postcodes": postcodes})
+    response = req.post(f'{URL}', json={"postcodes": postcodes}, timeout=5)
     status_code_exceptions(response.status_code)
     data = response.json()
     return data['result']
 
 
 def validates_string(text: str) -> str:
-    if not type(text) == str:
+    """Raises an error if text is not a string"""
+    if not isinstance(text, str):
         raise TypeError('Function expects a string.')
     return text
 
 
 def validates_float(number: float) -> float:
-    if not type(number) == float:
+    """Raises an error if number is not a float"""
+    if not isinstance(number, float):
         raise TypeError('Function expects two floats.')
     return number
 
 
 def status_code_exceptions(status_code: int) -> None:
+    """Raises an error depending on status code"""
     if status_code >= 500:
         raise req.RequestException('Unable to access API.')
 
 
 def validates_list_of_strings(list_of_strings: list[str]) -> None:
+    """Raises an error if data type is not a list of strings"""
     if not isinstance(list_of_strings, list):
         raise TypeError('Function expects a list of strings.')
 
