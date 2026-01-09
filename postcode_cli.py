@@ -18,7 +18,7 @@ if __name__ == "__main__":
     if args.mode not in ['validate', 'complete']:
         parser.error('Mode must be either validate or complete')
 
-    formatted_postcode = args.postcode.replace(" ", "").upper()
+    formatted_postcode = args.postcode.upper().strip()
 
     if args.mode == 'validate':
         if validate_postcode(args.postcode):
@@ -27,6 +27,8 @@ if __name__ == "__main__":
             print(f'{formatted_postcode} is not a valid postcode.')
 
     if args.mode == 'complete':
-        completed_postcodes = get_postcode_completions(formatted_postcode)
+        completed_postcodes = get_postcode_completions(args.postcode)
+        if not completed_postcodes:
+            print(f'No matches for {formatted_postcode}.')
         for postcode in completed_postcodes:
             print(postcode)

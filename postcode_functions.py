@@ -51,7 +51,7 @@ def get_postcode_for_location(lat: float, long: float) -> str:
 def get_postcode_completions(postcode_start: str) -> list[str]:
     """Returns a list of all the possible postcodes using the start of some postcode"""
     validates_string(postcode_start)
-    formatted_postcode_start = postcode_start.replace(" ", "").upper()
+    formatted_postcode_start = postcode_start.replace(" ", "").upper().strip()
     response = req.get(
         f'{URL}/{formatted_postcode_start}/autocomplete?limit=5')
     status_code_exceptions(response.status_code)
