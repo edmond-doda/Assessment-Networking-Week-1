@@ -24,7 +24,7 @@ def validate_postcode(postcode: str) -> bool:
     """Validates whether a postcode exists, and returns True if it does."""
     validates_string(postcode)
     formatted_postcode = postcode.replace(" ", "").upper()
-    response = req.get(f'{URL}/{postcode}/validate')
+    response = req.get(f'{URL}/{formatted_postcode}/validate')
 
     status_code_exceptions(response.status_code)
 
@@ -53,7 +53,7 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
     validates_string(postcode_start)
     formatted_postcode_start = postcode_start.replace(" ", "").upper()
     response = req.get(
-        f'{URL}/{formatted_postcode_start}/autocomplete?limit=100')
+        f'{URL}/{formatted_postcode_start}/autocomplete?limit=5')
     status_code_exceptions(response.status_code)
 
     postcodes = response.json()['result']
