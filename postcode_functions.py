@@ -22,13 +22,13 @@ def load_cache() -> dict:
 def save_cache(cache: dict):
     """Saves the cache to a file as JSON"""
     with open(CACHE_FILE, 'w') as f:
-        json.dump(cache, f)
+        json.dump(cache, f, indent=2)
 
 
 def validate_postcode(postcode: str) -> bool:
     """Validates whether a postcode exists, and returns True if it does."""
     validates_string(postcode)
-    formatted_postcode = postcode.replace(" ", "").upper()
+    formatted_postcode = postcode.upper().strip()
 
     cache = load_cache()
     if formatted_postcode in cache and "valid" in cache[formatted_postcode]:
@@ -66,7 +66,7 @@ def get_postcode_for_location(lat: float, long: float) -> str:
 def get_postcode_completions(postcode_start: str) -> list[str]:
     """Returns a list of all the possible postcodes using the start of some postcode"""
     validates_string(postcode_start)
-    formatted_postcode_start = postcode_start.replace(" ", "").upper().strip()
+    formatted_postcode_start = postcode_start.upper().strip()
 
     cache = load_cache()
     if formatted_postcode_start in cache:
@@ -79,7 +79,7 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
 
     cache[formatted_postcode_start] = {
         'valid': False,
-        'completions': formatted_postcode_start
+        'completions': postcodes
     }
     save_cache(cache)
 
